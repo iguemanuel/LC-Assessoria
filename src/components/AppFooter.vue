@@ -18,6 +18,10 @@ const services = [
   'Auxílio-Acidente',
   'Auxílio-Doença',
 ]
+
+const whatsappMessage =
+  'Olá! Gostaria de solicitar uma consultoria sobre os serviços da LC Assessoria. Poderia me ajudar, por favor?'
+const whatsappLink = `https://wa.me/5542998468326?text=${encodeURIComponent(whatsappMessage)}`
 </script>
 
 <template>
@@ -60,11 +64,7 @@ const services = [
           <h4 class="footer-heading">Contato</h4>
           <ul>
             <li>
-              <a
-                href="https://wa.me/5542998468326"
-                target="_blank"
-                rel="noopener"
-                class="footer-link"
+              <a :href="whatsappLink" target="_blank" rel="noopener" class="footer-link"
                 >WhatsApp</a
               >
             </li>
