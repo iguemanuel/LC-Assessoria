@@ -1,5 +1,12 @@
 <script setup lang="ts">
 import { services } from '@/data/services'
+
+const whatsappPhone = '5542998468326'
+
+function getWhatsAppLink(serviceTitle: string) {
+  const message = `Olá! Gostaria de solicitar uma consultoria sobre o serviço de ${serviceTitle}. Poderia me ajudar, por favor?`
+  return `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(message)}`
+}
 </script>
 
 <template>
@@ -43,7 +50,7 @@ import { services } from '@/data/services'
             <h3 class="service-title">{{ service.title }}</h3>
             <p class="service-desc">{{ service.description }}</p>
             <a
-              href="https://wa.me/5542998468326"
+              :href="getWhatsAppLink(service.title)"
               target="_blank"
               rel="noopener"
               class="service-link"
