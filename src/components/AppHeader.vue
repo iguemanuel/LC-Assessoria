@@ -47,7 +47,9 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
         >
           {{ link.label }}
         </a>
-        <a href="#contato" class="btn btn-primary nav-cta" @click="closeMobile">Fale Conosco</a>
+        <a href="#contato" class="btn btn-primary nav-cta" @click="closeMobile"
+          >Fale com um consultor</a
+        >
       </nav>
 
       <button

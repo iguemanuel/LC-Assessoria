@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { services } from '@/data/services'
 
-const whatsappPhone = '5542998468326'
+const whatsappPhone = '5542998468323'
 
 function getWhatsAppLink(serviceTitle: string) {
   const message = `Olá! Gostaria de solicitar uma consultoria sobre o serviço de ${serviceTitle}. Poderia me ajudar, por favor?`

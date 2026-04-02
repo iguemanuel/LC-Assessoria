@@ -12,6 +12,10 @@ const stats = [
 
 const displayValues = ref(stats.map(() => 0))
 
+function formatStatValue(value: number | undefined) {
+  return new Intl.NumberFormat('pt-BR').format(value ?? 0)
+}
+
 function animateCountUp() {
   if (animated.value) return
   animated.value = true
@@ -76,9 +80,36 @@ onMounted(() => {
       </div>
 
       <div ref="statsRef" class="about-stats">
-        <div v-for="(stat, index) in stats" :key="stat.label" class="stat">
-          <span class="stat-number">{{ displayValues[index] }}{{ stat.suffix }}</span>
-          <span class="stat-label">{{ stat.label }}</span>
+        <div class="about-stats-header">
+          <span class="about-stats-tag">Nossos números</span>
+          <h3 class="about-stats-title">Resultados que reforçam nossa credibilidade</h3>
+          <p class="about-stats-desc">
+            Atuação consistente, aprovação elevada e experiência prática para conduzir cada etapa
+            com segurança.
+          </p>
+        </div>
+
+        <div class="about-stats-grid">
+          <div
+            v-for="(stat, index) in stats"
+            :key="stat.label"
+            class="stat"
+            :class="{ 'stat--featured': index === 0 }"
+          >
+            <span class="stat-label">{{ stat.label }}</span>
+            <span class="stat-number"
+              >{{ formatStatValue(displayValues[index]) }}{{ stat.suffix }}</span
+            >
+            <span class="stat-note">
+              {{
+                index === 0
+                  ? 'Base sólida de clientes atendidos com acompanhamento próximo.'
+                  : index === 1
+                    ? 'Índice alto de aprovação nos casos acompanhados pela equipe.'
+                    : 'Know-how acumulado para orientar com mais precisão.'
+              }}
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -125,30 +156,118 @@ onMounted(() => {
 }
 
 .about-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
   margin-top: 48px;
-  border-radius: 12px;
-  padding: 40px;
+  padding: 36px;
+  border-radius: 24px;
+  border: 1px solid rgba(249, 178, 52, 0.2);
+  background:
+    radial-gradient(circle at top left, rgba(249, 178, 52, 0.18), transparent 42%),
+    linear-gradient(180deg, rgba(255, 244, 214, 0.9), rgba(255, 255, 255, 0.98));
+  box-shadow: 0 20px 60px rgba(26, 26, 26, 0.08);
+}
+
+.about-stats-header {
+  max-width: 640px;
+  margin-bottom: 28px;
+}
+
+.about-stats-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(249, 178, 52, 0.14);
+  color: var(--color-primary-dark);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.about-stats-title {
+  font-size: 1.5rem;
+  line-height: 1.25;
+  color: var(--color-dark);
+  margin-bottom: 10px;
+}
+
+.about-stats-desc {
+  font-size: 1rem;
+  color: var(--color-gray);
+  line-height: 1.7;
+}
+
+.about-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
 }
 
 .stat {
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  justify-content: space-between;
+  min-height: 190px;
+  padding: 24px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(249, 178, 52, 0.18);
+  box-shadow: 0 10px 30px rgba(26, 26, 26, 0.06);
+  overflow: hidden;
+}
+
+.stat::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(249, 178, 52, 0.14), transparent 55%);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.stat > * {
+  position: relative;
+  z-index: 1;
+}
+
+.stat--featured {
+  background: linear-gradient(180deg, var(--color-primary), var(--color-primary-dark));
+  color: var(--color-text-light);
+  transform: translateY(-8px);
+}
+
+.stat--featured::before {
+  background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.25), transparent 50%);
+}
+
+.stat--featured .stat-label,
+.stat--featured .stat-note,
+.stat--featured .stat-number {
+  color: var(--color-text-light);
 }
 
 .stat-number {
-  font-size: 2.5rem;
+  font-size: 3rem;
   font-weight: 700;
   color: var(--color-primary);
+  line-height: 1;
 }
 
 .stat-label {
-  font-size: 0.9375rem;
-  margin-top: 4px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-gray);
+}
+
+.stat-note {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--color-gray);
 }
 
 @media (max-width: 768px) {
@@ -162,14 +281,35 @@ onMounted(() => {
   }
 
   .about-stats {
-    grid-template-columns: 1fr;
-    gap: 28px;
-    padding: 32px;
     margin-top: 32px;
+    padding: 24px;
+  }
+
+  .about-stats-title {
+    font-size: 1.25rem;
+  }
+
+  .about-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .stat {
+    min-height: 0;
+    gap: 14px;
+    padding: 22px;
+  }
+
+  .stat--featured {
+    transform: none;
   }
 
   .stat-number {
-    font-size: 2rem;
+    font-size: 2.25rem;
+  }
+
+  .stat-note {
+    font-size: 0.9rem;
   }
 }
 </style>
