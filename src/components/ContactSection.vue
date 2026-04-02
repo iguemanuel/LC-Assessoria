@@ -33,7 +33,7 @@
               </div>
               <div>
                 <span class="contact-item-label">Telefone</span>
-                <span class="contact-item-value">(42) 99846-8326</span>
+                <span class="contact-item-value">(42)99846-8323</span>
               </div>
             </div>
 
@@ -78,7 +78,7 @@
               <div>
                 <span class="contact-item-label">Localização</span>
                 <span class="contact-item-value"
-                  >R. Barão do Rio Branco, 1378 - Santa Cruz, Guarapuava - PR</span
+                  >R. Barão do Rio Branco, 1378 - Batel, Guarapuava - PR</span
                 >
               </div>
             </div>
@@ -101,7 +101,7 @@
               custo.
             </p>
             <a
-              href="https://wa.me/5542998468326?text=Ol%C3%A1%21%20Gostaria%20de%20solicitar%20uma%20consultoria%20sobre%20os%20servi%C3%A7os%20da%20LC%20Assessoria.%20Poderia%20me%20ajudar%2C%20por%20favor%3F"
+              href="https://wa.me/5542998468323?text=Ol%C3%A1%21%20Gostaria%20de%20solicitar%20uma%20consultoria%20sobre%20os%20servi%C3%A7os%20da%20LC%20Assessoria.%20Poderia%20me%20ajudar%2C%20por%20favor%3F"
               target="_blank"
               rel="noopener"
               class="btn btn-whatsapp"

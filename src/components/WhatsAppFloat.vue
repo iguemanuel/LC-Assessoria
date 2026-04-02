@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const whatsappMessage =
   'Olá! Gostaria de solicitar uma consultoria sobre os serviços da LC Assessoria. Poderia me ajudar, por favor?'
-const whatsappLink = `https://wa.me/5542998468326?text=${encodeURIComponent(whatsappMessage)}`
+const whatsappLink = `https://wa.me/5542998468323?text=${encodeURIComponent(whatsappMessage)}`
 </script>
 
 <template>
