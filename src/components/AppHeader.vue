@@ -1,18 +1,26 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import logoSrc from '@/assets/images/logo.jpg'
+import { ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 
 const mobileMenuOpen = ref(false)
 const scrolled = ref(false)
+const activeHref = ref('#inicio')
+const menuToggleRef = ref<HTMLButtonElement | null>(null)
+const router = useRouter()
 
 const navLinks = [
   { label: 'Início', href: '#inicio' },
   { label: 'Sobre', href: '#sobre' },
+  { label: 'Equipe', href: '#equipe' },
   { label: 'Serviços', href: '#servicos' },
   { label: 'Como Funciona', href: '#como-funciona' },
   { label: 'Depoimentos', href: '#depoimentos' },
   { label: 'Contato', href: '#contato' },
 ]
+
+const desktopQuery = '(min-width: 1025px)'
+let sectionObserver: IntersectionObserver | null = null
+let desktopMedia: MediaQueryList | null = null
 
 function handleScroll() {
   scrolled.value = window.scrollY > 20
@@ -22,8 +30,55 @@ function closeMobile() {
   mobileMenuOpen.value = false
 }
 
-onMounted(() => window.addEventListener('scroll', handleScroll))
-onUnmounted(() => window.removeEventListener('scroll', handleScroll))
+function handleKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape' && mobileMenuOpen.value) {
+    closeMobile()
+    menuToggleRef.value?.focus()
+  }
+}
+
+function observeSections() {
+  sectionObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) activeHref.value = `#${entry.target.id}`
+      })
+    },
+    { rootMargin: '-80px 0px -60% 0px' },
+  )
+
+  navLinks.forEach((link) => {
+    const section = document.querySelector(link.href)
+    if (section) sectionObserver?.observe(section)
+  })
+}
+
+function handleDesktopChange(event: MediaQueryListEvent) {
+  if (event.matches) closeMobile()
+}
+
+watch(mobileMenuOpen, (open) => {
+  document.body.style.overflow = open ? 'hidden' : ''
+})
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll, { passive: true })
+  window.addEventListener('keydown', handleKeydown)
+
+  desktopMedia = window.matchMedia(desktopQuery)
+  desktopMedia.addEventListener('change', handleDesktopChange)
+
+  // As seções vêm do RouterView, que só renderiza após a navegação inicial.
+  router.isReady().then(nextTick).then(observeSections)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('keydown', handleKeydown)
+  desktopMedia?.removeEventListener('change', handleDesktopChange)
+  sectionObserver?.disconnect()
+  document.body.style.overflow = ''
+})
 </script>
 
 <template>
@@ -37,12 +92,14 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
         />
       </a>
 
-      <nav class="nav" :class="{ open: mobileMenuOpen }">
+      <nav id="menu-principal" class="nav" :class="{ open: mobileMenuOpen }">
         <a
           v-for="link in navLinks"
           :key="link.href"
           :href="link.href"
           class="nav-link"
+          :class="{ active: activeHref === link.href }"
+          :aria-current="activeHref === link.href ? 'location' : undefined"
           @click="closeMobile"
         >
           {{ link.label }}
@@ -53,10 +110,14 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
       </nav>
 
       <button
+        ref="menuToggleRef"
+        type="button"
         class="menu-toggle"
         :class="{ open: mobileMenuOpen }"
+        aria-controls="menu-principal"
+        :aria-expanded="mobileMenuOpen"
+        :aria-label="mobileMenuOpen ? 'Fechar menu' : 'Abrir menu'"
         @click="mobileMenuOpen = !mobileMenuOpen"
-        aria-label="Menu"
       >
         <span></span>
         <span></span>
@@ -111,6 +172,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
   color: var(--color-text);
   transition: var(--transition);
   position: relative;
+  white-space: nowrap;
 }
 
 .nav-link::after {
@@ -128,13 +190,39 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
   color: var(--color-primary);
 }
 
-.nav-link:hover::after {
+.nav-link:hover::after,
+.nav-link.active::after {
   width: 100%;
+}
+
+.nav-link.active {
+  color: var(--color-dark);
+  font-weight: 600;
 }
 
 .nav-cta {
   padding: 10px 24px;
   font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.logo:focus-visible,
+.nav-link:focus-visible,
+.nav-cta:focus-visible,
+.menu-toggle:focus-visible {
+  outline: 2px solid var(--color-dark);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+@media (max-width: 1100px) {
+  .nav {
+    gap: 16px;
+  }
+
+  .nav-cta {
+    padding: 10px 16px;
+  }
 }
 
 .menu-toggle {
@@ -169,7 +257,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
   transform: rotate(-45deg) translate(5px, -5px);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .menu-toggle {
     display: flex;
   }
@@ -185,12 +273,20 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
     justify-content: flex-start;
     padding-top: 40px;
     gap: 0;
+    overflow-y: auto;
     transform: translateX(100%);
-    transition: var(--transition);
+    visibility: hidden;
+    transition:
+      transform 0.3s ease,
+      visibility 0s linear 0.3s;
   }
 
   .nav.open {
     transform: translateX(0);
+    visibility: visible;
+    transition:
+      transform 0.3s ease,
+      visibility 0s;
   }
 
   .nav-link {
@@ -204,9 +300,20 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
     display: none;
   }
 
+  .nav-link.active {
+    background-color: rgba(249, 178, 52, 0.12);
+  }
+
   .nav-cta {
     margin-top: 16px;
     width: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav,
+  .nav.open {
+    transition: none;
   }
 }
 </style>
