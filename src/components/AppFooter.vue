@@ -4,6 +4,7 @@ import logoSrc from '@/assets/images/logo.jpg'
 const quickLinks = [
   { label: 'Início', href: '#inicio' },
   { label: 'Sobre Nós', href: '#sobre' },
+  { label: 'Equipe', href: '#equipe' },
   { label: 'Serviços', href: '#servicos' },
   { label: 'Como Funciona', href: '#como-funciona' },
   { label: 'Depoimentos', href: '#depoimentos' },
